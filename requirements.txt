@@ -1,0 +1,12 @@
+# Core runtime dependencies for the fraud-detection pipeline.
+# Lower bounds are used so CI/fresh installs resolve to current, mutually
+# compatible releases. Pin exact versions here if you need reproducibility.
+numpy>=1.24
+pandas>=1.5
+scikit-learn>=1.3
+imbalanced-learn>=0.11
+xgboost>=1.7
+lightgbm>=4.0
+shap>=0.43
+matplotlib>=3.7
+seaborn>=0.12
