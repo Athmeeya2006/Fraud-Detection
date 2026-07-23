@@ -13,7 +13,7 @@ WHY IT MATTERS:
   In production, a fraud analyst can't just see "fraud detected."
   They need to know WHY the model flagged it. SHAP provides that.
 
-  Regulators (like EU's GDPR) also require model explainability —
+  Regulators (like EU's GDPR) also require model explainability -
   you must be able to explain automated decisions to customers.
 
 KEY CONCEPTS:
@@ -71,7 +71,7 @@ def compute_shap_values(model, X_test, model_name, max_samples=500):
     Compute SHAP values for a trained model.
 
     WHY max_samples=500?
-      SHAP computation is expensive — O(n × features × 2^features) in theory.
+      SHAP computation is expensive - O(n × features × 2^features) in theory.
       TreeExplainer is fast but still slow on 57,000 test samples.
       500 samples is enough to get reliable global importance estimates.
 
@@ -163,7 +163,7 @@ def plot_global_importance(shap_values, X_sample, model_name, output_dir='output
     axes[0].set_yticks(range(top_n))
     axes[0].set_yticklabels(top_names[::-1], fontsize=10)
     axes[0].set_xlabel('Mean |SHAP Value|', fontsize=12)
-    axes[0].set_title(f'Top {top_n} Features — {model_name}\n(Mean Absolute SHAP)',
+    axes[0].set_title(f'Top {top_n} Features - {model_name}\n(Mean Absolute SHAP)',
                       fontsize=13, fontweight='bold')
     axes[0].grid(True, alpha=0.3, axis='x')
 
@@ -271,11 +271,11 @@ def explain_individual_predictions(shap_values, X_sample, y_test_sample,
         ax.set_yticklabels(labels[::-1], fontsize=9)
         ax.axvline(x=0, color='black', linewidth=1)
         ax.set_xlabel('SHAP Value (red=toward fraud, green=toward legit)')
-        ax.set_title(f'{case_name} — P(fraud) = {prob:.4f}',
+        ax.set_title(f'{case_name} - P(fraud) = {prob:.4f}',
                      fontsize=12, fontweight='bold')
         ax.grid(True, alpha=0.3, axis='x')
 
-    plt.suptitle(f'Individual Prediction Explanations — {model_name}',
+    plt.suptitle(f'Individual Prediction Explanations - {model_name}',
                  fontsize=14, fontweight='bold')
     plt.tight_layout()
     plt.savefig(os.path.join(output_dir, '11_shap_individual_explanations.png'),
@@ -327,7 +327,7 @@ def plot_shap_dependence(shap_values, X_sample, model_name, output_dir='outputs'
         ax.grid(True, alpha=0.3)
         plt.colorbar(scatter, ax=ax, label='SHAP value')
 
-    plt.suptitle(f'SHAP Dependence Plots — {model_name}',
+    plt.suptitle(f'SHAP Dependence Plots - {model_name}',
                  fontsize=14, fontweight='bold')
     plt.tight_layout()
     plt.savefig(os.path.join(output_dir, '12_shap_dependence.png'),

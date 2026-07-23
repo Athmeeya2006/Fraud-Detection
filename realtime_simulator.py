@@ -41,8 +41,8 @@ RISK TIERS IN PRODUCTION:
 
   Score > 0.9: BLOCK immediately + alert fraud team
   Score > 0.7: FLAG for manual review within 1 hour
-  Score > 0.4: MONITOR — add to watchlist
-  Score < 0.4: APPROVE — normal transaction
+  Score > 0.4: MONITOR - add to watchlist
+  Score < 0.4: APPROVE - normal transaction
 
   This reduces false positives while catching high-risk fraud.
 ========================================================================
@@ -114,7 +114,7 @@ def simulate_transaction_stream(X_test, y_test, amounts, n_transactions=100,
 
 def score_transaction(model, X_test, idx, threshold=0.5):
     """
-    Score a single transaction — the core of real-time fraud detection.
+    Score a single transaction - the core of real-time fraud detection.
 
     WHAT HAPPENS:
       1. Extract feature vector for this transaction
@@ -128,7 +128,7 @@ def score_transaction(model, X_test, idx, threshold=0.5):
       Neural networks might need GPU acceleration for real-time use.
 
     RISK TIERS:
-      The output isn't just "fraud or not" — it's a RISK LEVEL:
+      The output isn't just "fraud or not" - it's a RISK LEVEL:
       - CRITICAL (>0.9): Almost certainly fraud. Block immediately.
       - HIGH (>0.7): Very suspicious. Flag for urgent review.
       - MEDIUM (>0.4): Somewhat suspicious. Monitor this card.
@@ -421,7 +421,7 @@ def plot_simulation_results(df_results, model_name, output_dir='outputs'):
     ax.grid(True, alpha=0.3)
     ax.set_ylim(-0.05, 1.05)
 
-    plt.suptitle(f'Real-Time Fraud Scoring Simulation — {model_name}',
+    plt.suptitle(f'Real-Time Fraud Scoring Simulation - {model_name}',
                  fontsize=14, fontweight='bold', y=1.02)
     plt.tight_layout()
     plt.savefig(os.path.join(output_dir, '16_realtime_simulation.png'),

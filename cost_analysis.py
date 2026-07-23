@@ -24,7 +24,7 @@ THE BUSINESS PROBLEM:
 
 WHY THIS MATTERS:
   A model with 90% precision and 60% recall might save MORE money
-  than a model with 60% precision and 90% recall — it depends on
+  than a model with 60% precision and 90% recall - it depends on
   the transaction amounts and investigation costs!
 
   Example:
@@ -158,7 +158,7 @@ def plot_cost_analysis(cost_df, best_threshold, model_name,
        → Helps understand the tradeoff visually
 
     2. Net Savings vs Threshold:
-       Shows the "sweet spot" — the threshold that maximizes savings
+       Shows the "sweet spot" - the threshold that maximizes savings
        → Compare with F1-optimal threshold
 
     3. Cost Breakdown at Optimal Threshold:
@@ -261,7 +261,7 @@ def plot_cost_analysis(cost_df, best_threshold, model_name,
     ax.set_title('Sensitivity Analysis:\nOptimal Threshold vs Investigation Cost',
                  fontsize=13, fontweight='bold')
 
-    plt.suptitle(f'Cost-Sensitive Analysis — {model_name}\n(Investigation cost: ${investigation_cost})',
+    plt.suptitle(f'Cost-Sensitive Analysis - {model_name}\n(Investigation cost: ${investigation_cost})',
                  fontsize=14, fontweight='bold', y=1.02)
     plt.tight_layout()
     plt.savefig(os.path.join(output_dir, '15_cost_analysis.png'),

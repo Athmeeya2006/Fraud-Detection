@@ -35,7 +35,7 @@ def scale_features(train_df, test_df):
     WHAT WE SCALE: Only Time and Amount.
          V1-V28 are already PCA-transformed (which includes scaling).
 
-    CRITICAL — NO DATA LEAKAGE:
+    CRITICAL - NO DATA LEAKAGE:
          The scaler is FIT on the training set only, then used to TRANSFORM
          both train and test. Fitting on the full dataset (train + test)
          would leak information about the future (test) into preprocessing,
@@ -64,7 +64,7 @@ def scale_features(train_df, test_df):
     test_df = test_df.drop(['Time', 'Amount'], axis=1)
 
     print(f"  Scaler fit on {len(train_df):,} training rows only")
-    print("  After scaling  — Amount_scaled: train mean≈0, std≈1")
+    print("  After scaling  - Amount_scaled: train mean≈0, std≈1")
     print("                   Time_scaled:   train mean≈0, std≈1")
     print(f"  Feature columns: {[c for c in train_df.columns if c != 'Class']}")
 
@@ -78,7 +78,7 @@ def temporal_train_test_split(df, test_ratio=0.2):
     WHY TEMPORAL (not random)?
       In real fraud detection, you train on PAST data and predict FUTURE
       transactions. Random splitting would leak future patterns into
-      training — that's unrealistic and gives inflated results.
+      training - that's unrealistic and gives inflated results.
 
     HOW: Sort by time (already sorted in this dataset), then take the
          first 80% as training, last 20% as testing.

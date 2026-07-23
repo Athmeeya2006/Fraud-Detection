@@ -4,12 +4,12 @@ TOPICS 2 & 8: Model Evaluation & Threshold Tuning
 ========================================================================
 WHAT WE LEARN HERE:
   - Why accuracy is useless for imbalanced data
-  - Precision, Recall, F1 — what they mean in fraud context
-  - Confusion Matrix — visual breakdown of predictions
-  - Precision-Recall Curve — the key curve for imbalanced problems
-  - ROC Curve — overall model discrimination
-  - AUPRC — the single best metric for imbalanced classification
-  - Threshold tuning — finding the optimal cutoff
+  - Precision, Recall, F1 - what they mean in fraud context
+  - Confusion Matrix - visual breakdown of predictions
+  - Precision-Recall Curve - the key curve for imbalanced problems
+  - ROC Curve - overall model discrimination
+  - AUPRC - the single best metric for imbalanced classification
+  - Threshold tuning - finding the optimal cutoff
 
 REAL-WORLD CONTEXT:
   A bank must decide: What's worse?
@@ -74,7 +74,7 @@ def evaluate_model(model, X_test, y_test, model_name, output_dir='outputs'):
       High recall = fewer missed frauds
 
     F1 = 2 × (Precision × Recall) / (Precision + Recall)
-      Harmonic mean — balances precision and recall.
+      Harmonic mean - balances precision and recall.
       A model with 100% precision but 1% recall gets a low F1.
 
     AUPRC = Area Under Precision-Recall Curve
@@ -143,7 +143,7 @@ def plot_confusion_matrices(all_metrics, y_test, output_dir='outputs'):
     for j in range(i+1, len(axes_flat)):
         axes_flat[j].set_visible(False)
 
-    plt.suptitle('Confusion Matrices — All Models', fontsize=14, fontweight='bold')
+    plt.suptitle('Confusion Matrices - All Models', fontsize=14, fontweight='bold')
     plt.tight_layout()
     plt.savefig(os.path.join(output_dir, '06_confusion_matrices.png'), dpi=150, bbox_inches='tight')
     plt.close()
@@ -251,7 +251,7 @@ def plot_threshold_analysis(best_model_name, best_proba, y_test, output_dir='out
     ax.axvline(x=0.5, color='gray', linestyle=':', linewidth=1,
                label='Default threshold = 0.50')
 
-    ax.set_title(f'Threshold Analysis — {best_model_name}', fontsize=14, fontweight='bold')
+    ax.set_title(f'Threshold Analysis - {best_model_name}', fontsize=14, fontweight='bold')
     ax.set_xlabel('Threshold')
     ax.set_ylabel('Score')
     ax.legend(fontsize=10)
@@ -300,7 +300,7 @@ def plot_model_comparison(all_metrics, output_dir='outputs'):
                 ax.text(bar.get_x() + bar.get_width()/2, h + 0.01,
                         f'{h:.3f}', ha='center', va='bottom', fontsize=7, rotation=45)
 
-    ax.set_title('Model Comparison — All Metrics', fontsize=14, fontweight='bold')
+    ax.set_title('Model Comparison - All Metrics', fontsize=14, fontweight='bold')
     ax.set_xlabel('Model')
     ax.set_ylabel('Score')
     ax.set_xticks(x + width * 2)

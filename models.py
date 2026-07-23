@@ -34,7 +34,7 @@ def train_logistic_regression(X_train, y_train, use_class_weight=True):
       - Fast to train (seconds, not minutes)
       - Interpretable: the weights (coefficients) tell you which features
         matter and in which direction
-      - Good baseline — if a complex model can't beat it, something's wrong
+      - Good baseline - if a complex model can't beat it, something's wrong
 
     CLASS_WEIGHT='balanced':
       Instead of SMOTE, we tell the model to weight fraud examples more.

@@ -47,7 +47,7 @@ def test_scaler_fit_on_train_only(synthetic_csv):
     # Train scaled features are centered (fit on train).
     assert abs(train_scaled["Amount_scaled"].mean()) < 1e-6
     # Test scaled features are NOT forced to zero mean (they were only
-    # transformed) — this proves no leakage / no refit on test.
+    # transformed) - this proves no leakage / no refit on test.
     assert abs(test_scaled["Amount_scaled"].mean()) > 1e-9
 
 

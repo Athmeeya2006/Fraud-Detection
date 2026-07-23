@@ -10,7 +10,7 @@ WHAT WE LEARN HERE:
 
 WHY CROSS-VALIDATION?
   Problem with a single split:
-    Maybe we got "lucky" with our test set — it happened to contain
+    Maybe we got "lucky" with our test set - it happened to contain
     easy-to-detect fraud. Or maybe we got unlucky and the test set
     has unusual fraud patterns. One split = one data point.
 

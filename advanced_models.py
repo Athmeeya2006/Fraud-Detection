@@ -1,6 +1,6 @@
 """
 ========================================================================
-MODULE: Advanced Models — LightGBM + Neural Network (MLP)
+MODULE: Advanced Models - LightGBM + Neural Network (MLP)
 ========================================================================
 WHAT WE LEARN HERE:
   - LightGBM: a faster, more efficient gradient boosting framework
@@ -31,7 +31,7 @@ NEURAL NETWORK (MLP) for FRAUD:
   Architecture: Input → Hidden1(128) → Hidden2(64) → Hidden3(32) → Output
 
   Each neuron computes: output = activation(weights · inputs + bias)
-  ReLU activation: output = max(0, x) — simple but effective
+  ReLU activation: output = max(0, x) - simple but effective
 
   WHY IT'S DIFFERENT FROM TREES:
   - Trees partition feature space into boxes (axis-aligned splits)
@@ -58,7 +58,7 @@ except ImportError:
 
 def train_lightgbm(X_train, y_train, use_scale_pos=True):
     """
-    LIGHTGBM — Fast Gradient Boosting
+    LIGHTGBM - Fast Gradient Boosting
 
     KEY INNOVATIONS:
       1. Histogram-based splits: Instead of sorting all values for each
@@ -67,7 +67,7 @@ def train_lightgbm(X_train, y_train, use_scale_pos=True):
 
       2. Leaf-wise growth: Grows the leaf with the highest gain first.
          This can create deep, specialized paths for rare patterns
-         (like fraud) — perfect for our use case!
+         (like fraud) - perfect for our use case!
 
       3. Gradient-based One-Side Sampling (GOSS): Keeps all samples
          with large gradients (hard examples) and randomly samples
@@ -78,7 +78,7 @@ def train_lightgbm(X_train, y_train, use_scale_pos=True):
          features benefit from this.
 
     SCALE_POS_WEIGHT:
-      Same concept as XGBoost — weights fraud examples more heavily.
+      Same concept as XGBoost - weights fraud examples more heavily.
       Set to (# legit / # fraud) ≈ 577.
 
     WHY USE IT:
@@ -156,9 +156,9 @@ def train_neural_network(X_train, y_train, use_class_weight=True):
         representations of fraud patterns
 
     KEY HYPERPARAMETERS:
-      hidden_layer_sizes: (128, 64, 32) — neurons per layer
-      activation: 'relu' — max(0, x), prevents vanishing gradients
-      solver: 'adam' — adaptive learning rate optimizer (best for most cases)
+      hidden_layer_sizes: (128, 64, 32) - neurons per layer
+      activation: 'relu' - max(0, x), prevents vanishing gradients
+      solver: 'adam' - adaptive learning rate optimizer (best for most cases)
       alpha: L2 regularization strength (prevents overfitting)
       batch_size: mini-batch gradient descent (256 samples per update)
       early_stopping: stops training when validation score plateaus

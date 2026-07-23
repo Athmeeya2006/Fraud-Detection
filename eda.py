@@ -33,8 +33,8 @@ def run_eda(data_path='creditcard.csv', output_dir='outputs'):
     1. The shape & types of your data
     2. Missing values
     3. Class distribution (imbalance!)
-    4. Feature distributions — how do fraud vs legit look different?
-    5. Correlations — which features might be predictive?
+    4. Feature distributions - how do fraud vs legit look different?
+    5. Correlations - which features might be predictive?
     """
     os.makedirs(output_dir, exist_ok=True)
 
@@ -55,7 +55,7 @@ def run_eda(data_path='creditcard.csv', output_dir='outputs'):
 
     # ─── STEP 2: Class Distribution ───────────────────────────────────
     # THIS IS THE MOST IMPORTANT PLOT.
-    # It shows WHY accuracy is useless — 99.83% of data is one class.
+    # It shows WHY accuracy is useless - 99.83% of data is one class.
     print("\n" + "=" * 60)
     print("STEP 2: Class Distribution (The Imbalance Problem)")
     print("=" * 60)
@@ -100,10 +100,10 @@ def run_eda(data_path='creditcard.csv', output_dir='outputs'):
     fraud = df[df['Class'] == 1]
     legit = df[df['Class'] == 0]
 
-    print(f"\nFraud amount — Mean: ${fraud['Amount'].mean():.2f}, "
+    print(f"\nFraud amount - Mean: ${fraud['Amount'].mean():.2f}, "
           f"Median: ${fraud['Amount'].median():.2f}, "
           f"Max: ${fraud['Amount'].max():.2f}")
-    print(f"Legit amount — Mean: ${legit['Amount'].mean():.2f}, "
+    print(f"Legit amount - Mean: ${legit['Amount'].mean():.2f}, "
           f"Median: ${legit['Amount'].median():.2f}, "
           f"Max: ${legit['Amount'].max():.2f}")
 
@@ -229,7 +229,7 @@ def run_eda(data_path='creditcard.csv', output_dir='outputs'):
         print(f"    {feat}: {corr:.4f}")
 
     print("\n" + "=" * 60)
-    print("EDA COMPLETE — Check outputs/ for all plots")
+    print("EDA COMPLETE - Check outputs/ for all plots")
     print("=" * 60)
 
     return df

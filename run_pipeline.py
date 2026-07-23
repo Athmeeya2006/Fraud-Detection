@@ -31,7 +31,7 @@ def main():
     start_time = time.time()
 
     print("╔" + "═" * 58 + "╗")
-    print("║    CREDIT CARD FRAUD DETECTION — FULL PIPELINE          ║")
+    print("║    CREDIT CARD FRAUD DETECTION - FULL PIPELINE          ║")
     print("║    (10 Phases • Supervised + Unsupervised + Business)   ║")
     print("╚" + "═" * 58 + "╝")
 

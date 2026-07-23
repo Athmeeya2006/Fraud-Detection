@@ -5,7 +5,7 @@ extend-exclude = ["venv", ".venv", "outputs"]
 
 [tool.ruff.lint]
 # Pyflakes (F) + a pragmatic subset of pycodestyle (E/W) errors. Line-length
-# (E501) is intentionally not enforced — the modules use long teaching strings.
+# (E501) is intentionally not enforced - the modules use long teaching strings.
 select = ["E4", "E7", "E9", "F", "W"]
 
 [tool.pytest.ini_options]

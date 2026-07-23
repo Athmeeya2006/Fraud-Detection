@@ -59,7 +59,7 @@ import time
 
 def train_isolation_forest(X_train, contamination='auto', random_state=42):
     """
-    ISOLATION FOREST — The Core Unsupervised Anomaly Detector
+    ISOLATION FOREST - The Core Unsupervised Anomaly Detector
 
     HOW IT WORKS (step by step):
       1. Build many random trees (n_estimators)
@@ -117,7 +117,7 @@ def train_lof(X_train, contamination=0.00172, n_neighbors=20):
 
     INTUITION:
       Imagine a crowded mall. Most people are clustered in shops.
-      A person standing alone in a dark corner is an outlier — their
+      A person standing alone in a dark corner is an outlier - their
       "local density" is much lower than their neighbors' density.
 
     WHY LOF + IFOREST?
@@ -162,7 +162,7 @@ def evaluate_anomaly_detector(detector, X_test, y_test, name):
 
     NOTE: We don't expect unsupervised methods to match supervised ones.
     The point is: they work WITHOUT LABELS. Getting 50% recall with
-    no labels is impressive — it means we caught half the fraud with
+    no labels is impressive - it means we caught half the fraud with
     zero training labels!
     """
     print(f"\n  Evaluating {name}...")
@@ -226,9 +226,9 @@ def plot_anomaly_results(all_metrics, all_scores, y_test, output_dir='outputs'):
         legit_scores = scores[y_test == 0]
 
         ax.hist(legit_scores, bins=50, alpha=0.5, density=True,
-                label=f'{name} — Legit', color='#2ecc71')
+                label=f'{name} - Legit', color='#2ecc71')
         ax.hist(fraud_scores, bins=50, alpha=0.7, density=True,
-                label=f'{name} — Fraud', color='#e74c3c')
+                label=f'{name} - Fraud', color='#e74c3c')
         break  # Only show the first model for clarity
 
     ax.set_title('Anomaly Score Distribution', fontsize=13, fontweight='bold')
