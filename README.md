@@ -2,59 +2,124 @@
 
 [![CI](https://github.com/Athmeeya2006/Fraud-Detection/actions/workflows/ci.yml/badge.svg)](https://github.com/Athmeeya2006/Fraud-Detection/actions/workflows/ci.yml)
 
-An end-to-end, heavily-commented machine-learning pipeline for detecting
-fraudulent credit-card transactions on the classic
-[Kaggle Credit Card Fraud dataset](https://www.kaggle.com/datasets/mlg-ulb/creditcardfraud)
-(284,807 transactions, 0.17 % fraud). It is built as a **teaching project**:
-every module explains the *why* behind each decision, not just the *how*.
+A complete machine-learning system for detecting fraudulent credit-card
+transactions. It takes the raw transaction data, cleans and prepares it,
+trains and compares eight different models, evaluates them with the metrics
+that actually matter for fraud, explains *why* the model flags a transaction,
+translates the results into dollars saved, and simulates scoring live
+transactions in real time.
 
-The pipeline covers the full lifecycle — EDA, leakage-safe preprocessing,
-supervised and unsupervised modeling, evaluation, explainability, business
-cost analysis, and a real-time scoring simulation.
-
----
-
-## Pipeline phases
-
-| # | Phase | Module | What it does |
-|---|-------|--------|--------------|
-| 1 | EDA | [`eda.py`](eda.py) | Class imbalance, amount/time patterns, feature separability |
-| 2 | Preprocessing | [`preprocess.py`](preprocess.py) | Temporal split → **leakage-safe scaling** → SMOTE (train only) |
-| 3 | Base models | [`models.py`](models.py) | Logistic Regression, Random Forest, XGBoost (weighted + SMOTE) |
-| 4 | Advanced models | [`advanced_models.py`](advanced_models.py) | LightGBM, Neural Network (MLP) |
-| 5 | Evaluation | [`evaluate.py`](evaluate.py) | Precision/Recall/F1/AUPRC/ROC-AUC, curves, threshold tuning |
-| 6 | Cross-validation | [`cross_validation.py`](cross_validation.py) | Stratified K-fold stability (`mean ± std`) |
-| 7 | Explainability | [`feature_importance.py`](feature_importance.py) | SHAP global + local + dependence plots |
-| 8 | Anomaly detection | [`anomaly_detection.py`](anomaly_detection.py) | Isolation Forest & LOF (unsupervised) |
-| 9 | Cost analysis | [`cost_analysis.py`](cost_analysis.py) | Dollar impact + cost-optimal threshold |
-| 10 | Real-time sim | [`realtime_simulator.py`](realtime_simulator.py) | Streaming scoring, risk tiers, latency |
-
-Orchestrated end-to-end by [`run_pipeline.py`](run_pipeline.py).
+Built on the [Kaggle Credit Card Fraud dataset](https://www.kaggle.com/datasets/mlg-ulb/creditcardfraud):
+**284,807 transactions, of which only 492 (0.17 %) are fraud.** That extreme
+imbalance is the central challenge and shapes every decision in the pipeline.
 
 ---
 
-## Setup
+## What the system does
+
+The pipeline runs in ten stages. Each stage is a standalone Python module you
+can run on its own, and [`run_pipeline.py`](run_pipeline.py) chains them all
+together.
+
+### 1. Exploratory data analysis — [`eda.py`](eda.py)
+Loads the data and answers the basic questions before any modeling: How
+imbalanced is it? Do fraudulent transactions have different amounts or happen
+at different times? Which of the 28 anonymized features actually separate
+fraud from legitimate activity? Produces five plots and a ranked list of the
+most discriminative features.
+
+### 2. Preprocessing — [`preprocess.py`](preprocess.py)
+Prepares the data for modeling in three steps, in this specific order to avoid
+cheating:
+- **Split by time first.** The oldest 80 % of transactions become the training
+  set, the newest 20 % the test set. This mirrors reality — you train on the
+  past and predict the future.
+- **Scale `Time` and `Amount`.** These two columns are on wildly different
+  scales from the rest, so they get standardized. The scaler is fit on the
+  **training set only** and then applied to the test set. Fitting it on all the
+  data would leak information about the future into training and inflate the
+  scores.
+- **Balance the training data with SMOTE.** With only ~400 fraud examples,
+  models struggle to learn the pattern. SMOTE synthesizes new fraud examples by
+  interpolating between real ones. It is applied to the training set only — the
+  test set stays untouched so the evaluation reflects real-world proportions.
+
+### 3. Base models — [`models.py`](models.py)
+Trains three algorithms — **Logistic Regression, Random Forest, XGBoost** —
+each in two ways: once using class weights to handle the imbalance, and once on
+the SMOTE-balanced data. Six models total, so you can compare which imbalance
+strategy works better for each algorithm.
+
+### 4. Advanced models — [`advanced_models.py`](advanced_models.py)
+Adds two more model families: **LightGBM** (a faster gradient-boosting
+framework) and a **neural network** (multi-layer perceptron). Same two
+imbalance strategies as the base models.
+
+### 5. Evaluation — [`evaluate.py`](evaluate.py)
+Scores every model. **Accuracy is deliberately ignored** — a model that labels
+everything "legitimate" would be 99.8 % accurate and catch zero fraud. Instead
+it reports precision, recall, F1, ROC-AUC, and **AUPRC (area under the
+precision-recall curve)**, which is the single most reliable metric for
+imbalanced problems. Generates confusion matrices, PR/ROC curves, and a
+threshold-tuning plot, then picks the best model by AUPRC.
+
+### 6. Cross-validation — [`cross_validation.py`](cross_validation.py)
+A single train/test split can be lucky or unlucky. This stage runs stratified
+5-fold cross-validation (each fold keeps the same fraud ratio) and reports each
+model's score as `mean ± std`. A low standard deviation means the model is
+stable and you can trust its numbers.
+
+### 7. Explainability — [`feature_importance.py`](feature_importance.py)
+Uses **SHAP** to explain the model's decisions at two levels: globally (which
+features matter most overall) and locally (for one specific transaction, which
+feature values pushed it toward or away from "fraud"). This is what a fraud
+analyst needs to act on a flag — and what regulators require for automated
+decisions.
+
+### 8. Anomaly detection — [`anomaly_detection.py`](anomaly_detection.py)
+Detects fraud **without labels** using Isolation Forest and Local Outlier
+Factor. Useful for catching brand-new fraud patterns that no labeled example
+exists for yet, and as an independent second opinion alongside the supervised
+models.
+
+### 9. Cost analysis — [`cost_analysis.py`](cost_analysis.py)
+Converts model performance into money. Each outcome has a real cost: a caught
+fraud saves the transaction amount, a missed fraud loses it, a false alarm
+costs an investigation fee. This stage finds the decision threshold that
+**maximizes net dollars saved** — which is usually not the same threshold that
+maximizes F1 — and reports the total savings versus having no fraud detection
+at all.
+
+### 10. Real-time simulation — [`realtime_simulator.py`](realtime_simulator.py)
+Simulates a production scoring service: a stream of transactions arrives, each
+is scored in milliseconds, and assigned a risk tier (BLOCK / FLAG / MONITOR /
+APPROVE). Reports catch rate, false-alarm rate, and scoring latency
+percentiles to show the model is fast enough for real use.
+
+---
+
+## Quick start
 
 ```bash
-# 1. Clone
+# Clone and enter the project
 git clone https://github.com/Athmeeya2006/Fraud-Detection.git
 cd Fraud-Detection
 
-# 2. Create a virtual environment
+# Set up a virtual environment
 python -m venv venv
 source venv/bin/activate          # Windows: venv\Scripts\activate
 
-# 3. Install dependencies
+# Install dependencies
 pip install -r requirements.txt
 ```
 
 ### Get the dataset
 
-The dataset (~150 MB) is **not** committed to the repo. Download
-`creditcard.csv` from Kaggle and place it in the project root:
+The dataset (~150 MB) is **not** included in the repo. Download `creditcard.csv`
+from Kaggle and place it in the project root:
 
 ```bash
-# Requires a configured Kaggle API token (~/.kaggle/kaggle.json)
+# Requires a Kaggle API token at ~/.kaggle/kaggle.json
 kaggle datasets download -d mlg-ulb/creditcardfraud
 unzip creditcardfraud.zip -d .
 ```
@@ -62,35 +127,27 @@ unzip creditcardfraud.zip -d .
 Or download it manually from
 <https://www.kaggle.com/datasets/mlg-ulb/creditcardfraud> and unzip it here.
 
----
-
-## Usage
-
-Run the entire pipeline (all 10 phases, plots saved to `outputs/`):
+### Run it
 
 ```bash
+# Run the full pipeline — all 10 stages, ~a few minutes
 python run_pipeline.py
-```
 
-Or run any phase on its own — each module is runnable and self-contained:
-
-```bash
+# Or run any single stage
 python eda.py
-python preprocess.py
 python models.py
-python evaluate.py          # etc.
+python evaluate.py
 ```
 
-All figures and result CSVs are written to [`outputs/`](outputs/).
+All plots and result CSVs are written to [`outputs/`](outputs/).
 
 ---
 
 ## Testing
 
-The test suite runs against a small **synthetic dataset** (generated in
-[`tests/conftest.py`](tests/conftest.py)) with the same schema as the real
-data, so it needs no Kaggle download and finishes in ~20 s while still
-exercising every real code path.
+The test suite runs against a small synthetic dataset generated on the fly (see
+[`tests/conftest.py`](tests/conftest.py)), so it needs no Kaggle download and
+finishes in about 20 seconds while exercising every module.
 
 ```bash
 pip install -r requirements-dev.txt
@@ -98,22 +155,24 @@ pytest              # run all tests
 ruff check .        # lint
 ```
 
-Continuous integration runs lint + import checks + the full test suite on
-Python 3.10/3.11/3.12 via [GitHub Actions](.github/workflows/ci.yml).
+CI runs the linter, an import check, and the full test suite on Python 3.10,
+3.11, and 3.12 for every push and pull request — see
+[`.github/workflows/ci.yml`](.github/workflows/ci.yml).
 
 ---
 
-## Design notes
+## Key design decisions
 
-- **No data leakage.** The `StandardScaler` is fit on the **training split
-  only** and then applied to the test set; cross-validation refits the scaler
-  fresh inside every fold. SMOTE is applied to training data exclusively.
-- **AUPRC over accuracy.** With 0.17 % fraud, accuracy is meaningless. The
-  pipeline selects the best model by **Area Under the Precision-Recall Curve**.
-- **Business-aware thresholds.** [`cost_analysis.py`](cost_analysis.py) tunes
-  the decision threshold to maximize net dollar savings, not just F1.
-- **Explainability.** SHAP values explain both global feature importance and
-  individual predictions — required for real-world fraud review and regulation.
+- **No data leakage.** The scaler is fit on the training split only;
+  cross-validation refits it fresh inside each fold; SMOTE touches training
+  data only. The test set is never seen during any fitting step.
+- **AUPRC, not accuracy.** At 0.17 % fraud, accuracy is misleading. Models are
+  selected by area under the precision-recall curve.
+- **Thresholds tuned for money, not just F1.** The optimal cutoff depends on
+  transaction amounts and investigation costs, so it is chosen to maximize net
+  savings.
+- **Every prediction is explainable.** SHAP shows the reason behind each flag,
+  which is required for both analyst review and compliance.
 
 ---
 
@@ -121,20 +180,21 @@ Python 3.10/3.11/3.12 via [GitHub Actions](.github/workflows/ci.yml).
 
 ```
 Fraud-Detection/
-├── eda.py                  # Phase 1  — exploratory data analysis
-├── preprocess.py           # Phase 2  — scaling, split, SMOTE
-├── models.py               # Phase 3  — base models
-├── advanced_models.py      # Phase 4  — LightGBM + neural net
-├── evaluate.py             # Phase 5  — metrics & threshold tuning
-├── cross_validation.py     # Phase 6  — stratified K-fold
-├── feature_importance.py   # Phase 7  — SHAP explainability
-├── anomaly_detection.py    # Phase 8  — Isolation Forest + LOF
-├── cost_analysis.py        # Phase 9  — cost-sensitive analysis
-├── realtime_simulator.py   # Phase 10 — real-time scoring sim
-├── run_pipeline.py         # runs all phases end-to-end
-├── tests/                  # pytest suite (synthetic data)
-├── outputs/                # generated plots & CSVs (git-ignored)
-├── requirements.txt        # runtime dependencies
-├── requirements-dev.txt    # + pytest, ruff
+├── eda.py                  # 1  exploratory data analysis
+├── preprocess.py           # 2  split, scale, SMOTE
+├── models.py               # 3  logistic regression, random forest, XGBoost
+├── advanced_models.py      # 4  LightGBM, neural network
+├── evaluate.py             # 5  metrics, curves, threshold tuning
+├── cross_validation.py     # 6  stratified k-fold stability
+├── feature_importance.py   # 7  SHAP explainability
+├── anomaly_detection.py    # 8  Isolation Forest, LOF (unsupervised)
+├── cost_analysis.py        # 9  dollar impact, cost-optimal threshold
+├── realtime_simulator.py   # 10 real-time scoring simulation
+├── run_pipeline.py         #    runs all stages end to end
+├── tests/                  #    pytest suite (synthetic data)
+├── outputs/                #    generated plots and CSVs (git-ignored)
+├── requirements.txt        #    runtime dependencies
+├── requirements-dev.txt    #    + pytest, ruff
+├── pyproject.toml          #    ruff and pytest configuration
 └── .github/workflows/ci.yml
 ```
